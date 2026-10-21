@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}QR-код для {{ equipment[3] }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-qrcode"></i> QR-код устройства</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <img src="{{ qr_image }}" alt="QR Code" style="width: 250px; height: 250px;">
+                </div>
+                <h5>{{ equipment[3] }}</h5>
+                <p class="text-muted">Инвентарный номер: {{ equipment[1] }}</p>
+                <p class="text-muted">Серийный номер: {{ equipment[2] or '—' }}</p>
+                <hr>
+                <p class="small text-muted">
+                    При сканировании QR-кода откроется страница с информацией об этом оборудовании.
+                </p>
+                <a href="{{ url_for('view_equipment', equipment_id=equipment[0]) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Назад к устройству
+                </a>
+                <button onclick="window.print()" class="btn btn-info">
+                    <i class="fas fa-print"></i> Печать QR-кода
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

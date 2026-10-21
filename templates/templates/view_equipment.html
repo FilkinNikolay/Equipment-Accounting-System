@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Просмотр оборудования{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-info-circle"></i> Информация об оборудовании</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr><th width="35%">ID:</th><td>{{ equipment[0] }}</td></tr>
+                    <tr><th>Инвентарный номер:</th><td><strong>{{ equipment[1] }}</strong></td></tr>
+                    <tr><th>Серийный номер:</th><td>{{ equipment[2] or '—' }}</td></tr>
+                    <tr><th>Наименование:</th><td>{{ equipment[3] }}</td></tr>
+                    <tr><th>Тип:</th><td>{{ equipment[12] or '—' }}</td></tr>
+                    <tr><th>Статус:</th>
+                        <td>
+                            <span class="status-badge status-{{ equipment[4] }}">
+                                {% if equipment[4] == 'in_use' %}💻 В эксплуатации
+                                {% elif equipment[4] == 'in_stock' %}📦 На складе
+                                {% elif equipment[4] == 'repair' %}🔧 В ремонте
+                                {% else %}{{ equipment[4] }}{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr><th>Местоположение:</th><td>{{ equipment[5] or '—' }}</td></tr>
+                    <tr><th>МОЛ (ответственный):</th><td>{{ equipment[11] or '—' }}</td></tr>
+                    <tr><th>Дата покупки:</th><td>{{ equipment[6] or '—' }}</td></tr>
+                    <tr><th>Гарантия до:</th><td>{{ equipment[8] or '—' }}</td></tr>
+                    <tr><th>Стоимость:</th>
+                        <td>{% if equipment[7] %}{{ '{:,.0f}'.format(equipment[7]) }} руб.{% else %}—{% endif %}</td>
+                    </tr>
+                </table>
+
+                <div class="mt-4 d-flex gap-2 flex-wrap">
+                    <a href="{{ url_for('edit_equipment', equipment_id=equipment[0]) }}" class="btn btn-warning">✏️ Редактировать</a>
+                    <a href="{{ url_for('show_qrcode', equipment_id=equipment[0]) }}" class="btn btn-secondary">📱 QR-код</a>
+                    <a href="{{ url_for('compatible_parts', equipment_id=equipment[0]) }}" class="btn btn-info">🔧 Совместимость</a>
+                    <a href="{{ url_for('equipment_list') }}" class="btn btn-outline-secondary">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- История перемещений -->
+<div class="row mt-4">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0"><i class="fas fa-history"></i> История перемещений</h4>
+            </div>
+            <div class="card-body">
+                {% if history %}
+                    <div class="list-group">
+                        {% for h in history %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <span>📅 {{ h[6] }}</span>
+                                <span>{{ h[7] or 'Склад' }} → {{ h[8] or h[5] or '—' }}</span>
+                            </div>
+                            <div class="small text-muted">Документ: {{ h[10] or '—' }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">Нет записей о перемещениях</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

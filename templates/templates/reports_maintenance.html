@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}График профилактики{% endblock %}
+{% block content %}
+<h2>🔧 График профилактических работ</h2>
+<div class="card">
+    <div class="card-header bg-info text-white">Профилактика в ближайшие 30 дней</div>
+    <div class="card-body">
+        <table class="table">
+            <thead><tr><th>Инв. номер</th><th>Наименование</th><th>Местоположение</th><th>Ответственный</th><th>Дата профилактики</th></tr></thead>
+            <tbody>
+                {% for eq in upcoming_maintenance %}
+                <tr><td>{{ eq[1] }}</td><td>{{ eq[2] }}</td><td>{{ eq[3] or '—' }}</td><td>{{ eq[5] or '—' }}</td><td>{{ eq[6] }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Отчёт по поломкам{% endblock %}
+{% block content %}
+<h2>🔧 Отчёт по поломкам и ремонтам</h2>
+<div class="card mb-4">
+    <div class="card-header bg-danger text-white">Топ проблемных устройств</div>
+    <div class="card-body">
+        <table class="table">
+            <thead><tr><th>Инв. номер</th><th>Наименование</th><th>Кол-во поломок</th><th>Общая стоимость</th></tr></thead>
+            <tbody>
+                {% for eq in problem_equipment %}
+                <tr><td>{{ eq[1] }}</td><td>{{ eq[2] }}</td><td>{{ eq[3] }}</td><td>{{ eq[4] or 0 }} руб.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header bg-primary text-white">История ремонтов</div>
+    <div class="card-body">
+        <table class="table">
+            <thead><tr><th>Дата</th><th>Оборудование</th><th>Описание</th><th>Стоимость</th></tr></thead>
+            <tbody>
+                {% for r in repairs %}
+                <tr><td>{{ r[2] }}</td><td>{{ r[6] }} ({{ r[7] }})</td><td>{{ r[3] }}</td><td>{{ r[4] or 0 }} руб.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
