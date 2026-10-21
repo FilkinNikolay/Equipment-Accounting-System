@@ -30,11 +30,13 @@ def init_db():
         if cursor.fetchone()[0] == 0:
             users = [('admin', 'admin123', 'admin', 'Администратор', 'IT-отдел', 'admin@company.ru'), ('ivanov', 'pass123', 'mol', 'Иванов Иван Иванович', 'Бухгалтерия', 'ivanov@company.ru'), ('petrova', 'pass123', 'mol', 'Петрова Анна Сергеевна', 'Отдел продаж', 'petrova@company.ru'), ('sidorov', 'pass123', 'it_user', 'Сидоров Дмитрий Николаевич', 'IT-отдел', 'sidorov@company.ru'), ('kozlov', 'pass123', 'mol', 'Козлов Михаил Андреевич', 'Отдел разработки', 'kozlov@company.ru')]
             cursor.executemany('INSERT INTO users (username, password, role, full_name, department, email) VALUES (?, ?, ?, ?, ?, ?)', users)
+            print("  [OK] Добавлены пользователи")
 
         cursor.execute("SELECT COUNT(*) FROM equipment_types")
         if cursor.fetchone()[0] == 0:
             types = [('ПК', 'Компьютеры', 20.0), ('Ноутбук', 'Компьютеры', 25.0), ('МФУ/Принтер', 'Периферия', 15.0), ('Сетевое оборудование', 'Сетевое', 20.0), ('Сервер', 'Сетевое', 10.0), ('Монитор', 'Периферия', 20.0), ('ИБП', 'Электрооборудование', 15.0)]
             cursor.executemany('INSERT INTO equipment_types (name, category, depreciation_rate) VALUES (?, ?, ?)', types)
+            print("  [OK] Добавлены типы оборудования")
 
         cursor.execute("SELECT COUNT(*) FROM equipment")
         if cursor.fetchone()[0] == 0:
@@ -51,21 +53,25 @@ def init_db():
                 ('ИН-010', 'SN100010', 'Монитор LG UltraGear 24"', 6, 'in_stock', 'Склад №1', None, '2025-02-10', '2027-02-10', 15000)
             ]
             cursor.executemany('INSERT INTO equipment (inventory_number, serial_number, name, type_id, status, location, responsible_id, purchase_date, warranty_end, cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', equipment)
+            print("  [OK] Добавлено оборудование (10 единиц)")
 
         cursor.execute("SELECT COUNT(*) FROM movements")
         if cursor.fetchone()[0] == 0:
             movements = [(1, None, 2, None, 'Каб. 101', '2024-03-15', 'АКТ-001'), (2, None, 3, None, 'Каб. 102', '2024-01-10', 'АКТ-002'), (3, 4, 4, 'IT-отдел', 'Мастерская', '2024-10-01', 'РЕМ-001')]
             cursor.executemany('INSERT INTO movements (equipment_id, from_mol_id, to_mol_id, from_location, to_location, date, document_number) VALUES (?, ?, ?, ?, ?, ?, ?)', movements)
+            print("  [OK] Добавлена история перемещений")
 
         cursor.execute("SELECT COUNT(*) FROM consumables")
         if cursor.fetchone()[0] == 0:
             consumables = [('Картридж HP 85A', 'HP LaserJet M404dn', 15, 5, 'шт', 1200), ('Тонер Brother TN-1050', 'Brother DCP-L5500DN', 8, 3, 'шт', 1500), ('Бумага А4 500л', 'Универсальный', 50, 10, 'пачка', 350)]
             cursor.executemany('INSERT INTO consumables (name, compatible_models, quantity, min_quantity, unit, price) VALUES (?, ?, ?, ?, ?, ?)', consumables)
+            print("  [OK] Добавлены расходные материалы")
 
         cursor.execute("SELECT COUNT(*) FROM compatibility")
         if cursor.fetchone()[0] == 0:
             compatibility = [(1, 'ОЗУ', 'DDR4 8GB 2666MHz', 'Kingston / Samsung / Crucial'), (2, 'ОЗУ', 'DDR4 8GB 3200MHz SO-DIMM', 'Kingston / Samsung / Crucial')]
             cursor.executemany('INSERT INTO compatibility (equipment_type_id, component_type, compatible_part, description) VALUES (?, ?, ?, ?)', compatibility)
+            print("  [OK] Добавлена совместимость комплектующих")
 
         cursor.execute("SELECT COUNT(*) FROM licenses")
         if cursor.fetchone()[0] == 0:
@@ -75,6 +81,7 @@ def init_db():
                 (3, 'Windows 10 Pro', 'WX4-7777-8888-9999', (datetime.now() - timedelta(days=10)).strftime('%Y-%m-%d')),
             ]
             cursor.executemany('INSERT INTO licenses (equipment_id, software_name, license_key, expiration_date) VALUES (?, ?, ?, ?)', licenses)
+            print("  [OK] Добавлены лицензии")
 
         cursor.execute("SELECT COUNT(*) FROM repairs")
         if cursor.fetchone()[0] == 0:
@@ -84,10 +91,12 @@ def init_db():
                 (1, (datetime.now() - timedelta(days=60)).strftime('%Y-%m-%d'), 'Замена блока питания', 3500),
             ]
             cursor.executemany('INSERT INTO repairs (equipment_id, repair_date, description, cost) VALUES (?, ?, ?, ?)', repairs)
+            print("  [OK] Добавлена история ремонтов")
 
         cursor.execute("UPDATE equipment SET next_maintenance_date = date('now', '+5 days') WHERE id = 1 AND next_maintenance_date IS NULL")
         cursor.execute("UPDATE equipment SET next_maintenance_date = date('now', '+12 days') WHERE id = 2 AND next_maintenance_date IS NULL")
         conn.commit()
+    print("\n[OK] База данных успешно инициализирована!")
 
 # ОСНОВНЫЕ ОПЕРАЦИИ
 def get_statistics():
@@ -306,7 +315,6 @@ def get_most_expensive_equipment(limit=10):
         cursor.execute('SELECT id, inventory_number, name, cost, status, location FROM equipment WHERE cost IS NOT NULL ORDER BY cost DESC LIMIT ?', (limit,))
         return cursor.fetchall()
 
-# ДОБАВЛЕНО СПЕЦИАЛЬНО ДЛЯ ВЫПАДАЮЩЕГО СПИСКА
 def get_all_types():
     with get_connection() as conn:
         cursor = conn.cursor()
